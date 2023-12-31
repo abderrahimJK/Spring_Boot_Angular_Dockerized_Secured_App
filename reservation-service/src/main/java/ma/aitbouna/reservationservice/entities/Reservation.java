@@ -1,7 +1,9 @@
 package ma.aitbouna.reservationservice.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import ma.aitbouna.reservationservice.model.Ressource;
 
 import java.util.Date;
 
@@ -13,7 +15,9 @@ public class Reservation {
     private String name;
     private String context;
     private Date date;
-    private String duration;
-    @ManyToOne()
-    private Person person;
+    private int duration;
+    private Long personId;
+    private Long resourceId;
+    @Transient
+    private Ressource resource;
 }

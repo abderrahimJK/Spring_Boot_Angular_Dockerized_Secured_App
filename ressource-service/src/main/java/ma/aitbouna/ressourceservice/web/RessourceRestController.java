@@ -15,18 +15,18 @@ public class RessourceRestController {
         this.ressourceService = ressourceService;
     }
 
-    @GetMapping("/ressources")
+    @GetMapping("/resources")
     public List<Ressource> keynotesList(){
         return ressourceService.findAll();
     }
 
-    @GetMapping("/ressources/{id}")
+    @GetMapping("/resources/{id}")
     public Ressource ressourceById(@PathVariable Long id){
         return ressourceService.findById(id);
     }
 
-    @PostMapping("/ressources")
-    public void addRessource(@RequestBody Ressource ressources) {
-        ressourceService.save(ressources);
+    @PostMapping("/resources")
+    public void addResource(@RequestBody Ressource resources) {
+        ressourceService.save(resources);
     }
 }

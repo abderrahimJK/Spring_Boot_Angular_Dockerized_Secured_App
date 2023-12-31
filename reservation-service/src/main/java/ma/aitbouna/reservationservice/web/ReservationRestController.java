@@ -5,8 +5,11 @@ import ma.aitbouna.reservationservice.entities.Reservation;
 import ma.aitbouna.reservationservice.repository.PersonRepository;
 import ma.aitbouna.reservationservice.service.PersonService;
 import ma.aitbouna.reservationservice.service.ReservationService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -42,12 +45,18 @@ public class ReservationRestController {
 
     @GetMapping("/persons")
     public List<Person> personList(){
-        return personService.findAll();
+        List<Person> personList = personService.findAll();
+        for(Person person: personList){
+            List<Reservation> list = reservationService.findByPersonId(person.getId());
+            person.setReservations(list);
+        }
+        return personList;
+
     }
 
-    @GetMapping("/persons/{id}")
-    public Person personById(@PathVariable Long id){
-        return personService.findById(id);
+    @GetMapping("/persons/{id}/reservations")
+    public List<Reservation> personById(@PathVariable Long id){
+       return reservationService.findByPersonId(id);
     }
 
     @PostMapping("/persons")
@@ -56,17 +65,9 @@ public class ReservationRestController {
     }
 
 
-    @GetMapping("/reservation/{id}")
-    public List<Reservation> reservationByUserId(@PathVariable Long id) {
-        Person person = personService.findById(id);
-        return reservationService.findByPerson(person);
-    }
-
     @PostMapping("/reservation/{id}")
     public void reservation(@RequestBody Reservation reservation,@PathVariable Long id) {
 
-        Person person = personService.findById(id);
-        reservation.setPerson(person);
         reservationService.save(reservation);
     }
 }

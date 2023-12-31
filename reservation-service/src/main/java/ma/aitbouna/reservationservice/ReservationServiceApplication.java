@@ -9,7 +9,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @SpringBootApplication
 public class ReservationServiceApplication {
@@ -24,18 +27,33 @@ public class ReservationServiceApplication {
         return args -> {
 
 
+            List.of("Abderrahim","Fatima","Khalid").forEach(
+                    p->{
+                        Person person = Person
+                                .builder()
+                                .name(p)
+                                .function("Developer")
+                                .email(p + "@aitbouna.ma")
+                                .build();
+                        personService.save(person);
 
-            Person p1 = new Person(null, "Person 1", "Dev1@aitbouna.ma", "Dev",null);
-            Person p2 = new Person(null, "Person 2", "Dev2@aitbouna.ma", "AI",null);
-            Person p3 = new Person(null, "Person 3", "Dev3@aitbouna.ma", "Art", null);
+                    }
+            );
+            List.of("reservation 1","reservation 2","reservation 3").forEach(
+                    r->{
+                        Reservation reservation = Reservation
+                                .builder()
+                                .name(r)
+                                .date(new Date())
+                                .context(r + " context")
+                                .resourceId(1L)
+                                .personId(personService.findById(1L).getId())
+                                .duration(30)
+                                .build();
+                        reservationService.save(reservation);
 
-            personService.save(p1);
-            personService.save(p2);
-            personService.save(p3);
-
-            reservationService.save(new Reservation(null, "Reservation 1", "Dev", new Date("12/12/23"), "1h",p1));
-            reservationService.save(new Reservation(null, "Reservation 2", "AI",  new Date("12/12/23"), "1.5h", p2));
-            reservationService.save(new Reservation(null, "Reservation 3", "Art",  new Date("12/12/23"), "1h", p3));
+                    }
+            );
 
 
 

@@ -29,7 +29,7 @@ public class ReservationService {
         return ressourceRepository.findAll();
     }
 
-    public List<Reservation> findByPerson(Person person) {
-        return ressourceRepository.findByPerson(person);
+    public List<Reservation> findByPersonId(Long id) {
+        return ressourceRepository.findByPersonId(id);
     }
 }
