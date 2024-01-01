@@ -43,6 +43,35 @@ Since a reservation management application uses the Microservice architecture pa
 - Resource service 
 - Reservation service
 
+# Application UI
+
+## Home Page
+
+![img.png](assert%2Fscreenshot%2Fimg.png)
+
+## Login Page
+
+![img_1.png](assert%2Fscreenshot%2Fimg_1.png)
+
+## User Side
+
+![img_6.png](assert%2Fscreenshot%2Fimg_6.png)
+
+### Reservation Page
+
+![img_3.png](assert%2Fscreenshot%2Fimg_3.png)
+
+## Admin Side
+
+![img_4.png](assert%2Fscreenshot%2Fimg_4.png)
+
+
+### Resource Page
+
+![img_5.png](assert%2Fscreenshot%2Fimg_5.png)
+
+
+
 # Using patterns
 
 - Service Discovery & Service Registry : Eureka
@@ -215,19 +244,6 @@ cd gateway-service
 java -jar target/gateway-service-0.0.1.BUILD-SNAPSHOT.jar
 ```
 
-# Application UI
-
-## Home Page
-
-![img.png](assert%2Fscreenshot%2Fimg.png)
-
-## Resource Page
-
-![img_1.png](assert%2Fscreenshot%2Fimg_1.png)
-
-## Reservation Page
-
-![img_2.png](assert%2Fscreenshot%2Fimg_2.png)
 
 # Guides
 
