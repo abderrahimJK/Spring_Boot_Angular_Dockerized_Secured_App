@@ -2,6 +2,7 @@ package ma.aitbouna.ressourceservice.web;
 
 import ma.aitbouna.ressourceservice.entities.Ressource;
 import ma.aitbouna.ressourceservice.service.RessourceService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class RessourceRestController {
     }
 
     @GetMapping("/resources")
+    @PreAuthorize("hasAuthority = 'USER'")
     public List<Ressource> keynotesList(){
         return ressourceService.findAll();
     }
