@@ -1,0 +1,163 @@
+services:
+  mysql-db:
+    image: mariadb:10.6
+    container_name: mysql-db
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: exam_app_db
+      MYSQL_USER: abderrahim
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 10
+  consul-server:
+    image: consul:1.15
+    container_name: consul-server
+    restart: always
+    ports:
+      - 8500:8500
+    environment:
+      - "CONSUL_BIND_INTERFACE=eth0"
+    command: agent -server -ui -node=server1 -bootstrap-expect=1 -client=0.0.0.0
+  config-service:
+    build: ./config-service
+    container_name: config-service
+    ports:
+      - '8888:8888'
+    expose:
+      - '8888'
+    restart: always
+    environment:
+      - CONF_REPO=https://github.com/abderrahimJK/config-repo.git
+    depends_on:
+        - consul-server
+  gateway-service:
+    build: ./gateway
+    container_name: gateway-service
+    ports:
+      - '9999:9999'
+    expose:
+      - '9999'
+    environment:
+        - CONSUL_URL:optional:configserver:http://consul-server:8888
+    restart: always
+  reservation-service:
+    build: ./reservation-service
+    container_name: reservation-service
+    ports:
+      - '8082:8082'
+    expose:
+      - '8082'
+    restart: always
+    depends_on:
+      - mysql-db
+    environment:
+      - DB_URL=jdbc:mysql://mysql-db:3306/reservation-db
+      - CONSUL_URL:optional:configserver:http://consul-server:8888
+#      - JWT_ISSUER_URI=http://localhost:8080/realms/sdia-realm
+#      - JWT_JWK_SET_URI=http://keycloak:8080/realms/sdia-realm/protocol/openid-connect/certs
+  ressource-service:
+    build: ./ressource-service
+    container_name: ressource-service
+    ports:
+      - '8081:8081'
+    expose:
+      - '8081'
+    restart: always
+    depends_on:
+      - mysql-db
+    environment:
+      - DB_URL=jdbc:mysql://mysql-db:3306/resource-db
+      - CONSUL_URL:optional:configserver:http://consul-server:8888
+      - CONSUL_HOST:consul-server
+      - CONSUL_PORT:8500
+#      - JWT_ISSUER_URI=http://localhost:8080/realms/sdia-realm
+#      - JWT_JWK_SET_URI=http://keycloak:8080/realms/sdia-realm/protocol/openid-connect/certs
+  angular-front:
+    build: ./Rerservation_management_angular
+    container_name: angular-front
+    ports:
+      - '8085:80'
+    expose:
+      - '8085'
+    restart: always
+volumes:
+  mysql_data:
+  postgres_data_enset:
+  pgadmin_data:
+
+
+
+
+
+
+
+#  postgres-service:
+#    image: postgres
+#    container_name: postgres-service
+#    volumes:
+#      - postgres_data_enset:/var/lib/postgresql/data
+#    environment:
+#      POSTGRES_DB: keycloak_enset_db
+#      POSTGRES_USER: keycloak
+#      POSTGRES_PASSWORD: k1234
+#    ports:
+#      - '5432:5432'
+#    expose:
+#      - '5432'
+#    healthcheck:
+#      test: "exit 0"
+#  pgadmin4:
+#    image: dpage/pgadmin4
+#    container_name: pgadmin4
+#    restart: always
+#    ports:
+#      - "8888:80"
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: med@gmail.com
+#      PGADMIN_DEFAULT_PASSWORD: azer
+#    volumes:
+#      - pgadmin_data:/var/lib/pgadmin
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:latest
+#    environment:
+#      KC_DB: postgres
+#      KC_DB_URL: jdbc:postgresql://postgres-service:5432/keycloak_enset_db
+#      KC_DB_USERNAME: keycloak
+#      KC_DB_PASSWORD: k1234
+#      KEYCLOAK_ADMIN: admin
+#      KC_HTTP_ENABLED: "true"
+#      KC_HOSTNAME_STRICT_HTTPS: "false"
+#      KEYCLOAK_ADMIN_PASSWORD: admin
+#    command:
+#      - start-dev
+#    restart: always
+#    ports:
+#      - '8080:8080'
+#    expose:
+#      - '8080'
+#    depends_on:
+#      - postgres-service
+#  enset-customer-service-thymeleaf:
+#    build: ./customer-front-thymeleaf-app
+#    container_name: enset-customer-service-thymeleaf
+#    ports:
+#      - '8090:8090'
+#    expose:
+#      - '8090'
+#    restart: always
+#    depends_on:
+#      - keycloak
+#    environment:
+#      - KEYCLOAK_REDIRECT_URI=http://localhost:8090/login/oauth2/code/sdia-customer-client
+#      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/sdia-realm
+#      - KEYCLOAK_AUTH=http://localhost:8080/realms/sdia-realm/protocol/openid-connect/auth
+#      - KEYCLOAK_AUTH_TOKEN=http://keycloak:8080/realms/sdia-realm/protocol/openid-connect/token
+#      - JWT_JWK_SET_URI=http://keycloak:8080/realms/sdia-realm/protocol/openid-connect/certs
+#      - INVENTORY_SERVICE_BASE_URI=http://enset-inventory-service:8098
